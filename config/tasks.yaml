@@ -1,0 +1,120 @@
+# chart_generation:
+#   description: >
+#       Do not send the csv file to model. Just generate code and do the analysis in the local.
+#       Do the following in local csv file in current directory. The file name is "decoded_ev6_data_full.csv"
+#       Do not generate code as a string with newline characters (`\n`), as it causes errors.
+#       Do not generate code as a string with (`;`), as it causes errors.
+#       Create a 2 × 5 grid of visual plots based on the data with an index number in the title.
+#       The top row of the grid should show the following signals over time, aggregated to a weekly basis: Speed, OutdoorTemperature, BatteryMaxTemperature, StateOfChargeBMS, StateOfHealth.
+#       use only the following column: Speed, OutdoorTemperature, BatteryMaxTemperature, StateOfChargeBMS, StateOfHealth, TimeStamp 
+#       The bottom row should show the same signals, but in the form of a 10-bin histogram.
+#       Use the following colour palette to add some colour diversity to the plots: #3D85C6, #FF9900, #1D0AE, #F68556 and #646464.
+#       Avoid cluttering any of the axes.
+#   expected_output: >
+#     A bar chart displaying work hours for different machines, highlighting usage patterns and workload imbalances.
+# chart_generation:
+#   description: > 
+#       Plot the GPS position of the car as a route in a geographical map and output the plot as a downloadable HTML file.
+#       - The route should be coloured red (#F65856).
+#       - The map should by default be zoomed out so that all observations are visible on the map when opening it.
+#   expected_output: >
+#       Downloadable HTML file
+
+chart_generation:
+  description: >
+      Do not send the csv file to model. Just generate code and do the analysis in the local.
+      Do the following in local csv file in current directory. The file name is "new_data.csv"
+      "You are tasked with generating high-quality and insightful visualizations from structured CSV data. "
+        "Use the provided dataset schema to guide your chart generation.\n\n"
+        "## CSV Column Schema\n\n"
+        "| Column Name             | Type   | Unit      | Description                                    |\n"
+        "|-------------------------|--------|-----------|------------------------------------------------|\n"
+        "| **TimeStamp**           | string | N/A       | Timestamp of the recorded data                |\n"
+        "| **AccelerationX**       | float  | m/s²      | Acceleration along the X-axis                 |\n"
+        "| **AccelerationY**       | float  | m/s²      | Acceleration along the Y-axis                 |\n"
+        "| **AccelerationZ**       | float  | m/s²      | Acceleration along the Z-axis                 |\n"
+        "| **Altitude**            | float  | meters    | Altitude of the vehicle                       |\n"
+        "| **BatteryCurrent**      | float  | Amperes   | Battery current in Amperes                    |\n"
+        "| **BatteryDCVoltage**    | float  | Volts     | Battery voltage in DC volts                   |\n"
+        "| **Speed**               | float  | m/s       | Vehicle speed measured in meters per second   |\n"
+        "| **Latitude**            | float  | degrees   | Latitude coordinate of the vehicle            |\n"
+        "| **Longitude**           | float  | degrees   | Longitude coordinate of the vehicle           |\n"
+        "| **StateOfChargeBMS**    | float  | %         | Battery Management System State of Charge     |\n"
+        "| **StateOfChargeDisplay**| float  | %         | Displayed State of Charge                     |\n"
+        "| **StateOfHealth**       | float  | %         | Battery health percentage                     |\n"
+        "| **SpeedAccuracy**       | float  | m/s       | Accuracy of speed measurement                 |\n"
+        "| **log_file**            | string | N/A       | Log file reference                            |\n\n"
+      ### Instructions\n"
+      **Use this column schema** when generating visualizations; there are some other columns which you may ignore. \n
+      **Ensure proper labels and units** on all charts.\n
+      Do not generate code as a string with newline characters (`\n`), as it causes errors.
+      Do not generate code as a string with (`;`), as it causes errors.
+      Consider missing values in csv as `N/A` and remove the row from calculation
+      Please calculate a new signal, BatteryConsumption. 
+      This signal should be measured in kWh per 100 km using the columns BatteryCurrent, BatteryDCVoltage, TimeStamp and SpeedKMH only. Ignore rest of the columns in code.
+      To calculate SpeedKMH, use Speed (measured in m/s) and convert it to km/h. 
+      Make sure to ignore periods where SpeedKMH is below 1 km/h or periods where data for any of the required parameters is not available. 
+      Before calculating BatteryConsumption, make sure to aggregate the raw data to 1-hour periods.  
+      Before BatteryConsumption, remove outliers using Interquartile Range (IQR) Method.
+      Create 3 insightful plots to visualise the new BatteryConsumption parameter.
+      Plot1:  should show BatteryConsumption aggregated to daily averages.
+      Plot2:  should show BatteryConsumption aggregated to hourly averages.
+      Plot3:  should show BatteryConsumption in histogram.
+      Think step-by-step. 
+  expected_output: >
+      Generated charts following description and the code used
+
+
+
+# suggestion_generation:
+#   description: >
+#     Generate actionable suggestions for improving machinery operational performance. The suggestions should be based on:
+#     - Machinery Data: Tailor suggestions based on work hours, fuel consumption, and availability.
+#     - Performance Metrics: Analyze trends like diesel consumption and work hours to identify areas for improvement.
+#     - Machine Availability: Consider availability and working days to suggest actions for optimizing machine use.
+    
+#     The goal is to provide clear, actionable steps that can help improve fuel efficiency, reduce downtime, and increase machine utilization.
+#   expected_output: >
+#     A list of actionable suggestions for each machine, aimed at improving operational efficiency, reducing downtime, and optimizing fuel consumption.
+
+# table_generation:
+#   description: >
+#     Generate tables summarizing the key metrics and trends observed in the machinery data, including:
+#     - Work Hours: A table summarizing cumulative work hours, including up-to-date figures.
+#     - Fuel Efficiency: A table showing fuel consumption relative to work hours, highlighting inefficient machines.
+#     - Availability: A table summarizing machine availability and usage patterns.
+#     - Diesel Consumption: A table showing total diesel consumption and average consumption per machine.
+#     - Consider missing values in csv as `N/A` and do the analysis.
+    
+#     These tables will serve as the foundation for generating charts in the next task.
+#   expected_output: >
+#     A set of tables summarizing key operational metrics, including work hours, fuel consumption, and availability, ready to be used for chart generation.
+
+# chart_generation:
+#   description: >
+#     Generate a bar chart summarizing work hours for each machine. 
+#     Let us think step by step,
+#     The chart should include:
+#     - Display work hours up to the latest date.
+#     - Subtract starting and end date cummulative work hours to get current usage for that particular month.
+#     - Highlight machines with the highest and lowest usage.
+#     - Consider missing values in csv as `N/A` and do the analysis.
+#     Use only data from csv file. Do not hallucinate by generating data. 
+
+#     Save the chart as an image file in the current directory and provide a URL for easy embedding into reports.
+#   expected_output: >
+#     A bar chart showing work hours for different machines, highlighting usage patterns and potential workload imbalances.
+
+# final_report_assembly:
+#   description: >
+#     Assemble the final report by integrating the tables and charts generated in the previous tasks. The report should include:
+#     - Work Hours and Efficiency: Overview of the work hours and fuel efficiency of different machines, presented in tables and charts.
+#     - Availability and Utilization: Insights into machine availability and utilization, with visualizations and metrics.
+#     - Fuel Consumption: Summary of diesel consumption patterns and fuel efficiency, presented in tables and charts.
+#     - Suggested Actions: A summary of actionable suggestions for improving operational efficiency based on the analysis.
+    
+#     The report should have tables and relevant charts side by side with appropriate size.
+    
+#     The report should be formatted for easy consumption by stakeholders, providing valuable insights into machinery performance and areas for improvement.
+#   expected_output: >
+#     A comprehensive final report that integrates tables, charts, and actionable insights into a single document, formatted for stakeholders.
